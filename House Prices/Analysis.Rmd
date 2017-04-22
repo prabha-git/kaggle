@@ -1,0 +1,36 @@
+---
+title: "House Pricing Analysis"
+author: "Prabha"
+date: "4/22/2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Exploratory Analysis
+```{r }
+load('/Users/prabha/GitHub/Kaggle/House Prices/.RData')
+summary(train)
+```
+
+Total Rows
+
+```{r}
+nrow(train)
+```
+
+
+Finding how many NAs, 
+
+```{r}
+sort(sapply(train,function(x) sum(is.na(x))),decreasing=T)
+```
+
+finding unique values
+
+```{r}
+sort(sapply(train,function(x) length(unique(x))))
+```
+
