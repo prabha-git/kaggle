@@ -125,227 +125,131 @@ $(document).ready(function () {
 
 <div id="exploratory-analysis" class="section level2">
 <h2>Exploratory Analysis</h2>
+<div id="lets-combine-train-and-test-datasets-for-data-cleaning-activity" class="section level3">
+<h3>Lets combine train and test datasets for data cleaning activity</h3>
+<pre class="r"><code>library(dplyr)</code></pre>
+<pre><code>## 
+## Attaching package: 'dplyr'</code></pre>
+<pre><code>## The following objects are masked from 'package:stats':
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from 'package:base':
+## 
+##     intersect, setdiff, setequal, union</code></pre>
 <pre class="r"><code>load('/Users/prabha/GitHub/Kaggle/House Prices/.RData')
-summary(train)</code></pre>
-<pre><code>##        Id           MSSubClass       MSZoning     LotFrontage    
-##  Min.   :   1.0   Min.   : 20.0   C (all):  10   Min.   : 21.00  
-##  1st Qu.: 365.8   1st Qu.: 20.0   FV     :  65   1st Qu.: 59.00  
-##  Median : 730.5   Median : 50.0   RH     :  16   Median : 69.00  
-##  Mean   : 730.5   Mean   : 56.9   RL     :1151   Mean   : 70.05  
-##  3rd Qu.:1095.2   3rd Qu.: 70.0   RM     : 218   3rd Qu.: 80.00  
-##  Max.   :1460.0   Max.   :190.0                  Max.   :313.00  
-##                                                  NA's   :259     
-##     LotArea        Street      Alley      LotShape  LandContour
-##  Min.   :  1300   Grvl:   6   Grvl:  50   IR1:484   Bnk:  63   
-##  1st Qu.:  7554   Pave:1454   Pave:  41   IR2: 41   HLS:  50   
-##  Median :  9478               NA's:1369   IR3: 10   Low:  36   
-##  Mean   : 10517                           Reg:925   Lvl:1311   
-##  3rd Qu.: 11602                                                
-##  Max.   :215245                                                
-##                                                                
-##   Utilities      LotConfig    LandSlope   Neighborhood   Condition1  
-##  AllPub:1459   Corner : 263   Gtl:1382   NAmes  :225   Norm   :1260  
-##  NoSeWa:   1   CulDSac:  94   Mod:  65   CollgCr:150   Feedr  :  81  
-##                FR2    :  47   Sev:  13   OldTown:113   Artery :  48  
-##                FR3    :   4              Edwards:100   RRAn   :  26  
-##                Inside :1052              Somerst: 86   PosN   :  19  
-##                                          Gilbert: 79   RRAe   :  11  
-##                                          (Other):707   (Other):  15  
-##    Condition2     BldgType      HouseStyle   OverallQual    
-##  Norm   :1445   1Fam  :1220   1Story :726   Min.   : 1.000  
-##  Feedr  :   6   2fmCon:  31   2Story :445   1st Qu.: 5.000  
-##  Artery :   2   Duplex:  52   1.5Fin :154   Median : 6.000  
-##  PosN   :   2   Twnhs :  43   SLvl   : 65   Mean   : 6.099  
-##  RRNn   :   2   TwnhsE: 114   SFoyer : 37   3rd Qu.: 7.000  
-##  PosA   :   1                 1.5Unf : 14   Max.   :10.000  
-##  (Other):   2                 (Other): 19                   
-##   OverallCond      YearBuilt     YearRemodAdd    RoofStyle   
-##  Min.   :1.000   Min.   :1872   Min.   :1950   Flat   :  13  
-##  1st Qu.:5.000   1st Qu.:1954   1st Qu.:1967   Gable  :1141  
-##  Median :5.000   Median :1973   Median :1994   Gambrel:  11  
-##  Mean   :5.575   Mean   :1971   Mean   :1985   Hip    : 286  
-##  3rd Qu.:6.000   3rd Qu.:2000   3rd Qu.:2004   Mansard:   7  
-##  Max.   :9.000   Max.   :2010   Max.   :2010   Shed   :   2  
-##                                                              
-##     RoofMatl     Exterior1st   Exterior2nd    MasVnrType    MasVnrArea    
-##  CompShg:1434   VinylSd:515   VinylSd:504   BrkCmn : 15   Min.   :   0.0  
-##  Tar&amp;Grv:  11   HdBoard:222   MetalSd:214   BrkFace:445   1st Qu.:   0.0  
-##  WdShngl:   6   MetalSd:220   HdBoard:207   None   :864   Median :   0.0  
-##  WdShake:   5   Wd Sdng:206   Wd Sdng:197   Stone  :128   Mean   : 103.7  
-##  ClyTile:   1   Plywood:108   Plywood:142   NA's   :  8   3rd Qu.: 166.0  
-##  Membran:   1   CemntBd: 61   CmentBd: 60                 Max.   :1600.0  
-##  (Other):   2   (Other):128   (Other):136                 NA's   :8       
-##  ExterQual ExterCond  Foundation  BsmtQual   BsmtCond    BsmtExposure
-##  Ex: 52    Ex:   3   BrkTil:146   Ex  :121   Fa  :  45   Av  :221    
-##  Fa: 14    Fa:  28   CBlock:634   Fa  : 35   Gd  :  65   Gd  :134    
-##  Gd:488    Gd: 146   PConc :647   Gd  :618   Po  :   2   Mn  :114    
-##  TA:906    Po:   1   Slab  : 24   TA  :649   TA  :1311   No  :953    
-##            TA:1282   Stone :  6   NA's: 37   NA's:  37   NA's: 38    
-##                      Wood  :  3                                      
-##                                                                      
-##  BsmtFinType1   BsmtFinSF1     BsmtFinType2   BsmtFinSF2     
-##  ALQ :220     Min.   :   0.0   ALQ :  19    Min.   :   0.00  
-##  BLQ :148     1st Qu.:   0.0   BLQ :  33    1st Qu.:   0.00  
-##  GLQ :418     Median : 383.5   GLQ :  14    Median :   0.00  
-##  LwQ : 74     Mean   : 443.6   LwQ :  46    Mean   :  46.55  
-##  Rec :133     3rd Qu.: 712.2   Rec :  54    3rd Qu.:   0.00  
-##  Unf :430     Max.   :5644.0   Unf :1256    Max.   :1474.00  
-##  NA's: 37                      NA's:  38                     
-##    BsmtUnfSF       TotalBsmtSF      Heating     HeatingQC CentralAir
-##  Min.   :   0.0   Min.   :   0.0   Floor:   1   Ex:741    N:  95    
-##  1st Qu.: 223.0   1st Qu.: 795.8   GasA :1428   Fa: 49    Y:1365    
-##  Median : 477.5   Median : 991.5   GasW :  18   Gd:241              
-##  Mean   : 567.2   Mean   :1057.4   Grav :   7   Po:  1              
-##  3rd Qu.: 808.0   3rd Qu.:1298.2   OthW :   2   TA:428              
-##  Max.   :2336.0   Max.   :6110.0   Wall :   4                       
-##                                                                     
-##  Electrical     X1stFlrSF      X2ndFlrSF     LowQualFinSF    
-##  FuseA:  94   Min.   : 334   Min.   :   0   Min.   :  0.000  
-##  FuseF:  27   1st Qu.: 882   1st Qu.:   0   1st Qu.:  0.000  
-##  FuseP:   3   Median :1087   Median :   0   Median :  0.000  
-##  Mix  :   1   Mean   :1163   Mean   : 347   Mean   :  5.845  
-##  SBrkr:1334   3rd Qu.:1391   3rd Qu.: 728   3rd Qu.:  0.000  
-##  NA's :   1   Max.   :4692   Max.   :2065   Max.   :572.000  
-##                                                              
-##    GrLivArea     BsmtFullBath     BsmtHalfBath        FullBath    
-##  Min.   : 334   Min.   :0.0000   Min.   :0.00000   Min.   :0.000  
-##  1st Qu.:1130   1st Qu.:0.0000   1st Qu.:0.00000   1st Qu.:1.000  
-##  Median :1464   Median :0.0000   Median :0.00000   Median :2.000  
-##  Mean   :1515   Mean   :0.4253   Mean   :0.05753   Mean   :1.565  
-##  3rd Qu.:1777   3rd Qu.:1.0000   3rd Qu.:0.00000   3rd Qu.:2.000  
-##  Max.   :5642   Max.   :3.0000   Max.   :2.00000   Max.   :3.000  
-##                                                                   
-##     HalfBath       BedroomAbvGr    KitchenAbvGr   KitchenQual
-##  Min.   :0.0000   Min.   :0.000   Min.   :0.000   Ex:100     
-##  1st Qu.:0.0000   1st Qu.:2.000   1st Qu.:1.000   Fa: 39     
-##  Median :0.0000   Median :3.000   Median :1.000   Gd:586     
-##  Mean   :0.3829   Mean   :2.866   Mean   :1.047   TA:735     
-##  3rd Qu.:1.0000   3rd Qu.:3.000   3rd Qu.:1.000              
-##  Max.   :2.0000   Max.   :8.000   Max.   :3.000              
-##                                                              
-##   TotRmsAbvGrd    Functional    Fireplaces    FireplaceQu   GarageType 
-##  Min.   : 2.000   Maj1:  14   Min.   :0.000   Ex  : 24    2Types :  6  
-##  1st Qu.: 5.000   Maj2:   5   1st Qu.:0.000   Fa  : 33    Attchd :870  
-##  Median : 6.000   Min1:  31   Median :1.000   Gd  :380    Basment: 19  
-##  Mean   : 6.518   Min2:  34   Mean   :0.613   Po  : 20    BuiltIn: 88  
-##  3rd Qu.: 7.000   Mod :  15   3rd Qu.:1.000   TA  :313    CarPort:  9  
-##  Max.   :14.000   Sev :   1   Max.   :3.000   NA's:690    Detchd :387  
-##                   Typ :1360                               NA's   : 81  
-##   GarageYrBlt   GarageFinish   GarageCars      GarageArea     GarageQual 
-##  Min.   :1900   Fin :352     Min.   :0.000   Min.   :   0.0   Ex  :   3  
-##  1st Qu.:1961   RFn :422     1st Qu.:1.000   1st Qu.: 334.5   Fa  :  48  
-##  Median :1980   Unf :605     Median :2.000   Median : 480.0   Gd  :  14  
-##  Mean   :1979   NA's: 81     Mean   :1.767   Mean   : 473.0   Po  :   3  
-##  3rd Qu.:2002                3rd Qu.:2.000   3rd Qu.: 576.0   TA  :1311  
-##  Max.   :2010                Max.   :4.000   Max.   :1418.0   NA's:  81  
-##  NA's   :81                                                              
-##  GarageCond  PavedDrive   WoodDeckSF      OpenPorchSF     EnclosedPorch   
-##  Ex  :   2   N:  90     Min.   :  0.00   Min.   :  0.00   Min.   :  0.00  
-##  Fa  :  35   P:  30     1st Qu.:  0.00   1st Qu.:  0.00   1st Qu.:  0.00  
-##  Gd  :   9   Y:1340     Median :  0.00   Median : 25.00   Median :  0.00  
-##  Po  :   7              Mean   : 94.24   Mean   : 46.66   Mean   : 21.95  
-##  TA  :1326              3rd Qu.:168.00   3rd Qu.: 68.00   3rd Qu.:  0.00  
-##  NA's:  81              Max.   :857.00   Max.   :547.00   Max.   :552.00  
-##                                                                           
-##    X3SsnPorch      ScreenPorch        PoolArea        PoolQC    
-##  Min.   :  0.00   Min.   :  0.00   Min.   :  0.000   Ex  :   2  
-##  1st Qu.:  0.00   1st Qu.:  0.00   1st Qu.:  0.000   Fa  :   2  
-##  Median :  0.00   Median :  0.00   Median :  0.000   Gd  :   3  
-##  Mean   :  3.41   Mean   : 15.06   Mean   :  2.759   NA's:1453  
-##  3rd Qu.:  0.00   3rd Qu.:  0.00   3rd Qu.:  0.000              
-##  Max.   :508.00   Max.   :480.00   Max.   :738.000              
-##                                                                 
-##    Fence      MiscFeature    MiscVal             MoSold      
-##  GdPrv:  59   Gar2:   2   Min.   :    0.00   Min.   : 1.000  
-##  GdWo :  54   Othr:   2   1st Qu.:    0.00   1st Qu.: 5.000  
-##  MnPrv: 157   Shed:  49   Median :    0.00   Median : 6.000  
-##  MnWw :  11   TenC:   1   Mean   :   43.49   Mean   : 6.322  
-##  NA's :1179   NA's:1406   3rd Qu.:    0.00   3rd Qu.: 8.000  
-##                           Max.   :15500.00   Max.   :12.000  
-##                                                              
-##      YrSold        SaleType    SaleCondition    SalePrice     
-##  Min.   :2006   WD     :1267   Abnorml: 101   Min.   : 34900  
-##  1st Qu.:2007   New    : 122   AdjLand:   4   1st Qu.:129975  
-##  Median :2008   COD    :  43   Alloca :  12   Median :163000  
-##  Mean   :2008   ConLD  :   9   Family :  20   Mean   :180921  
-##  3rd Qu.:2009   ConLI  :   5   Normal :1198   3rd Qu.:214000  
-##  Max.   :2010   ConLw  :   5   Partial: 125   Max.   :755000  
-##                 (Other):   9</code></pre>
-<p>Total Rows</p>
-<pre class="r"><code>nrow(train)</code></pre>
-<pre><code>## [1] 1460</code></pre>
+colnames(train)[44]=&quot;1stFlrSF&quot;
+colnames(train)[45]=&quot;2ndFlrSF&quot;
+colnames(train)[70]=&quot;3SsnPorch&quot;
+colnames(test[,-1])==colnames(train[,-c(1,81)])</code></pre>
+<pre><code>##  [1] TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE
+## [15] TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE
+## [29] TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE
+## [43] TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE
+## [57] TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE
+## [71] TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE</code></pre>
+<p>Now train and test column names are same.Lets combine by removing id column and SalesPrice (which is dependent varaible we are trying to predict)</p>
+<pre class="r"><code>combined=rbind(train[,-c(1,81)],test[,-1])
+nrow(combined)</code></pre>
+<pre><code>## [1] 2919</code></pre>
 <p>Finding how many NAs,</p>
-<pre class="r"><code>sort(sapply(train,function(x) sum(is.na(x))),decreasing=T)</code></pre>
+<pre class="r"><code>sort(sapply(combined,function(x) sum(is.na(x))),decreasing=T)</code></pre>
 <pre><code>##        PoolQC   MiscFeature         Alley         Fence   FireplaceQu 
-##          1453          1406          1369          1179           690 
-##   LotFrontage    GarageType   GarageYrBlt  GarageFinish    GarageQual 
-##           259            81            81            81            81 
-##    GarageCond  BsmtExposure  BsmtFinType2      BsmtQual      BsmtCond 
-##            81            38            38            37            37 
-##  BsmtFinType1    MasVnrType    MasVnrArea    Electrical            Id 
-##            37             8             8             1             0 
-##    MSSubClass      MSZoning       LotArea        Street      LotShape 
+##          2909          2814          2721          2348          1420 
+##   LotFrontage   GarageYrBlt  GarageFinish    GarageQual    GarageCond 
+##           486           159           159           159           159 
+##    GarageType      BsmtCond  BsmtExposure      BsmtQual  BsmtFinType2 
+##           157            82            82            81            80 
+##  BsmtFinType1    MasVnrType    MasVnrArea      MSZoning     Utilities 
+##            79            24            23             4             2 
+##  BsmtFullBath  BsmtHalfBath    Functional   Exterior1st   Exterior2nd 
+##             2             2             2             1             1 
+##    BsmtFinSF1    BsmtFinSF2     BsmtUnfSF   TotalBsmtSF    Electrical 
+##             1             1             1             1             1 
+##   KitchenQual    GarageCars    GarageArea      SaleType    MSSubClass 
+##             1             1             1             1             0 
+##       LotArea        Street      LotShape   LandContour     LotConfig 
 ##             0             0             0             0             0 
-##   LandContour     Utilities     LotConfig     LandSlope  Neighborhood 
+##     LandSlope  Neighborhood    Condition1    Condition2      BldgType 
 ##             0             0             0             0             0 
-##    Condition1    Condition2      BldgType    HouseStyle   OverallQual 
+##    HouseStyle   OverallQual   OverallCond     YearBuilt  YearRemodAdd 
 ##             0             0             0             0             0 
-##   OverallCond     YearBuilt  YearRemodAdd     RoofStyle      RoofMatl 
+##     RoofStyle      RoofMatl     ExterQual     ExterCond    Foundation 
 ##             0             0             0             0             0 
-##   Exterior1st   Exterior2nd     ExterQual     ExterCond    Foundation 
+##       Heating     HeatingQC    CentralAir      1stFlrSF      2ndFlrSF 
 ##             0             0             0             0             0 
-##    BsmtFinSF1    BsmtFinSF2     BsmtUnfSF   TotalBsmtSF       Heating 
+##  LowQualFinSF     GrLivArea      FullBath      HalfBath  BedroomAbvGr 
 ##             0             0             0             0             0 
-##     HeatingQC    CentralAir     X1stFlrSF     X2ndFlrSF  LowQualFinSF 
+##  KitchenAbvGr  TotRmsAbvGrd    Fireplaces    PavedDrive    WoodDeckSF 
 ##             0             0             0             0             0 
-##     GrLivArea  BsmtFullBath  BsmtHalfBath      FullBath      HalfBath 
+##   OpenPorchSF EnclosedPorch     3SsnPorch   ScreenPorch      PoolArea 
 ##             0             0             0             0             0 
-##  BedroomAbvGr  KitchenAbvGr   KitchenQual  TotRmsAbvGrd    Functional 
-##             0             0             0             0             0 
-##    Fireplaces    GarageCars    GarageArea    PavedDrive    WoodDeckSF 
-##             0             0             0             0             0 
-##   OpenPorchSF EnclosedPorch    X3SsnPorch   ScreenPorch      PoolArea 
-##             0             0             0             0             0 
-##       MiscVal        MoSold        YrSold      SaleType SaleCondition 
-##             0             0             0             0             0 
-##     SalePrice 
-##             0</code></pre>
+##       MiscVal        MoSold        YrSold SaleCondition 
+##             0             0             0             0</code></pre>
+<p>First lets tackle PoolQC, Only table observations has values other are NA. Let’s see if we have any NA for poolArea &gt;0</p>
+<pre class="r"><code>filter(combined,PoolArea&gt;0 &amp; is.na(PoolQC))[,c('PoolArea','PoolQC')]</code></pre>
+<pre><code>##   PoolArea PoolQC
+## 1      368   &lt;NA&gt;
+## 2      444   &lt;NA&gt;
+## 3      561   &lt;NA&gt;</code></pre>
+<pre class="r"><code>with(combined,which(PoolArea&gt;0 &amp; is.na(PoolQC)))</code></pre>
+<pre><code>## [1] 2421 2504 2600</code></pre>
+<p>see the Average PoolArea for different PoolQC, Fill the NA where you have PoolArea &gt; 0 using the below mean</p>
+<pre class="r"><code>combined %&gt;% 
+group_by(PoolQC) %&gt;% 
+summarise(mean_PoolArea=mean(PoolArea))</code></pre>
+<pre><code>## # A tibble: 4 × 2
+##   PoolQC mean_PoolArea
+##   &lt;fctr&gt;         &lt;dbl&gt;
+## 1     Ex   359.7500000
+## 2     Fa   583.5000000
+## 3     Gd   648.5000000
+## 4     NA     0.4719835</code></pre>
+<pre class="r"><code>combined[c(2421,2504,2600),c('PoolArea','PoolQC')]</code></pre>
+<pre><code>##      PoolArea PoolQC
+## 2421      368   &lt;NA&gt;
+## 2504      444   &lt;NA&gt;
+## 2600      561   &lt;NA&gt;</code></pre>
+<pre class="r"><code>combined[2421,'PoolQC']=&quot;Ex&quot;
+combined[2504,'PoolQC']=&quot;Ex&quot;
+combined[2600,'PoolQC']=&quot;Fa&quot;</code></pre>
+<p>Other NA value replace with “None”</p>
+<pre class="r"><code>combined$PoolQC=as.character(combined$PoolQC)
+combined$PoolQC[is.na(combined$PoolQC)]=&quot;None&quot;</code></pre>
 <p>finding unique values</p>
-<pre class="r"><code>sort(sapply(train,function(x) length(unique(x))))</code></pre>
-<pre><code>##        Street     Utilities    CentralAir         Alley     LandSlope 
-##             2             2             2             3             3 
-##  BsmtHalfBath      HalfBath    PavedDrive      LotShape   LandContour 
-##             3             3             3             4             4 
-##     ExterQual  BsmtFullBath      FullBath  KitchenAbvGr   KitchenQual 
-##             4             4             4             4             4 
-##    Fireplaces  GarageFinish        PoolQC      MSZoning     LotConfig 
-##             4             4             4             5             5 
+<pre class="r"><code>sort(sapply(combined,function(x) length(unique(x))))</code></pre>
+<pre><code>##        Street    CentralAir         Alley     Utilities     LandSlope 
+##             2             2             3             3             3 
+##      HalfBath    PavedDrive      LotShape   LandContour     ExterQual 
+##             3             3             4             4             4 
+##  BsmtHalfBath  KitchenAbvGr  GarageFinish        PoolQC     LotConfig 
+##             4             4             4             4             5 
 ##      BldgType    MasVnrType     ExterCond      BsmtQual      BsmtCond 
 ##             5             5             5             5             5 
-##  BsmtExposure     HeatingQC    GarageCars         Fence   MiscFeature 
+##  BsmtExposure     HeatingQC  BsmtFullBath      FullBath   KitchenQual 
 ##             5             5             5             5             5 
-##        YrSold     RoofStyle    Foundation       Heating    Electrical 
-##             5             6             6             6             6 
-##   FireplaceQu    GarageQual    GarageCond SaleCondition  BsmtFinType1 
-##             6             6             6             6             7 
-##  BsmtFinType2    Functional    GarageType    Condition2    HouseStyle 
-##             7             7             7             8             8 
-##      RoofMatl  BedroomAbvGr      PoolArea    Condition1   OverallCond 
-##             8             8             8             9             9 
-##      SaleType   OverallQual  TotRmsAbvGrd        MoSold    MSSubClass 
-##             9            10            12            12            15 
-##   Exterior1st   Exterior2nd    X3SsnPorch       MiscVal  LowQualFinSF 
-##            15            16            20            21            24 
-##  Neighborhood  YearRemodAdd   ScreenPorch   GarageYrBlt   LotFrontage 
-##            25            61            76            98           111 
-##     YearBuilt EnclosedPorch    BsmtFinSF2   OpenPorchSF    WoodDeckSF 
-##           112           120           144           202           274 
-##    MasVnrArea     X2ndFlrSF    GarageArea    BsmtFinSF1     SalePrice 
-##           328           417           441           637           663 
-##   TotalBsmtSF     X1stFlrSF     BsmtUnfSF     GrLivArea       LotArea 
-##           721           753           780           861          1073 
-##            Id 
-##          1460</code></pre>
+##    Fireplaces         Fence   MiscFeature        YrSold      MSZoning 
+##             5             5             5             5             6 
+##     RoofStyle    Foundation       Heating    Electrical   FireplaceQu 
+##             6             6             6             6             6 
+##    GarageQual    GarageCond SaleCondition  BsmtFinType1  BsmtFinType2 
+##             6             6             6             7             7 
+##    GarageType    GarageCars    Condition2    HouseStyle      RoofMatl 
+##             7             7             8             8             8 
+##  BedroomAbvGr    Functional    Condition1   OverallCond   OverallQual 
+##             8             8             9             9            10 
+##      SaleType        MoSold  TotRmsAbvGrd      PoolArea    MSSubClass 
+##            10            12            14            14            16 
+##   Exterior1st   Exterior2nd  Neighborhood     3SsnPorch  LowQualFinSF 
+##            16            17            25            31            36 
+##       MiscVal  YearRemodAdd   GarageYrBlt     YearBuilt   ScreenPorch 
+##            38            61           104           118           121 
+##   LotFrontage EnclosedPorch   OpenPorchSF    BsmtFinSF2    WoodDeckSF 
+##           129           183           252           273           379 
+##    MasVnrArea    GarageArea      2ndFlrSF    BsmtFinSF1   TotalBsmtSF 
+##           445           604           635           992          1059 
+##      1stFlrSF     BsmtUnfSF     GrLivArea       LotArea 
+##          1083          1136          1292          1951</code></pre>
+</div>
 </div>
 
 

@@ -10,27 +10,55 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ## Exploratory Analysis
+### Lets combine train and test datasets for data cleaning activity
 ```{r }
+library(dplyr)
 load('/Users/prabha/GitHub/Kaggle/House Prices/.RData')
-summary(train)
+colnames(train)[44]="1stFlrSF"
+colnames(train)[45]="2ndFlrSF"
+colnames(train)[70]="3SsnPorch"
+colnames(test[,-1])==colnames(train[,-c(1,81)])
 ```
 
-Total Rows
-
+Now train and test column names are same.Lets combine by removing id column and SalesPrice (which is dependent varaible we are trying to predict)
 ```{r}
-nrow(train)
+combined=rbind(train[,-c(1,81)],test[,-1])
+nrow(combined)
 ```
-
 
 Finding how many NAs, 
 
 ```{r}
-sort(sapply(train,function(x) sum(is.na(x))),decreasing=T)
+sort(sapply(combined,function(x) sum(is.na(x))),decreasing=T)
 ```
+
+First lets tackle PoolQC, Only table observations has values other are NA. Let's see if we have any NA for poolArea >0
+```{r}
+filter(combined,PoolArea>0 & is.na(PoolQC))[,c('PoolArea','PoolQC')]
+with(combined,which(PoolArea>0 & is.na(PoolQC)))
+```
+
+see the Average PoolArea for different PoolQC, Fill the NA where you have PoolArea > 0 using the below mean
+```{r}
+combined %>% 
+group_by(PoolQC) %>% 
+summarise(mean_PoolArea=mean(PoolArea))
+combined[c(2421,2504,2600),c('PoolArea','PoolQC')]
+combined[2421,'PoolQC']="Ex"
+combined[2504,'PoolQC']="Ex"
+combined[2600,'PoolQC']="Fa"
+```
+Other NA value replace with "None"
+
+```{r}
+combined$PoolQC=as.character(combined$PoolQC)
+combined$PoolQC[is.na(combined$PoolQC)]="None"
+```
+
 
 finding unique values
 
 ```{r}
-sort(sapply(train,function(x) length(unique(x))))
+sort(sapply(combined,function(x) length(unique(x))))
 ```
 
